@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mcos.reply.replyMapper">	
+
+	<resultMap type="com.mcos.community.domain.ReplyVO" id="replyMap">
+		<id column="userid" property="userid" />
+		<result column="username" property="username" />
+		<result column="replyContent" property="replyContent" />
+		<result column="comid" property="comid" />
+		<result column="replyid" property="replyid" />
+		<result column="writeDate" property="writeDate" />
+		</resultMap>
+		
+		<resultMap type="com.project.maos.vo.MemberVO" id="memberMap">
+			<id column="userid" property="userId"/>
+			<result column="username" property="userName"/>
+			<result column="userpass" property="userPass"/>
+			<result column="enabled" property="enabled"/>
+			<result column="loginDate" property="loginDate"/>
+			<result column="email" property="email"/>
+			<result column="hiredate" property="hiredate"/>
+			<result column="salary" property="salary"/>
+			<result column="auth" property="auth"/>
+		</resultMap>
+
+<!-- 댓글 리스트 -->
+	<select id="replyList" parameterType="int" resultMap="replyMap">
+		select
+			r.comid, r.replyid, r.userid, r.username, r.replyContent, r.writeDate, m.userName, m.userId
+		from
+			reply r join member m
+		on	
+		 	 r.userid = m.userId
+		where
+			comid = #{comid}
+		order by replyid asc
+	</select>
+	<!-- 댓글 작성 -->
+	<insert id="registReply">
+		insert into reply(comid, userid, replyContent)
+		values(#{comid}, #{userid}, #{replyContent})
+	</insert>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteReply">
+		delete from reply where replyid = #{replyid}
+	</delete>
+	
+	<!-- 아이디 체크 -->
+	<select id="replyUserIdCheck" resultType="String">
+		select userid
+		from reply
+		where replyid = #{replyid}
+	</select>
+	
+	<!-- 댓글 수정 -->
+	<update id="modifyReply">
+		update reply
+		set replyContent = #{replyContent}, writeDate = now()
+		where replyid = #{replyid}
+				and userid = #{userid}
+		
+	</update>
+</mapper>
